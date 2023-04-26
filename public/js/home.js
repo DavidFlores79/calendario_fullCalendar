@@ -39,13 +39,13 @@ app.controller('home', function ($scope, $http) {
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay'
         },
-        eventColor: 'green',
+        eventColor: '#0C4C91',
         events: 'events',
         navLinks: true,
         editable: true,
         displayEventTime: true,
         eventRender: (info, element, view) => {
-
+            console.log('render info', info);
             if (info.allDay === 'true') {
                 info.allDay = true;
             } else {
@@ -55,10 +55,14 @@ app.controller('home', function ($scope, $http) {
         selectable: true,
         selectHelper: true,
         select: ({ start, end, allDay }) => {
-            
+
+            $('.selectpicker').selectpicker('deselectAll');
+            $('.selectpicker').selectpicker('refresh');
+            $('.tooltiptopicevent').remove();
             $scope.createForm.start = moment(start, 'DD.MM.YYYY').format('YYYY-MM-DD HH:mm:ss');
             $scope.createForm.end = moment(end, 'DD.MM.YYYY').format('YYYY-MM-DD HH:mm:ss');
             $scope.createForm.allDay = allDay;
+
             $('#createModal').modal('show');
         },
         eventClick: (info) => {
@@ -79,7 +83,7 @@ app.controller('home', function ($scope, $http) {
             $scope.show(event.id);
         },
         eventMouseLeave: function (info) {
-            $(this).css('z-index', 8);
+            // $(this).css('z-index', 8);
             $('.tooltiptopicevent').remove();
         },
         locale: 'es',
@@ -105,14 +109,14 @@ app.controller('home', function ($scope, $http) {
 
                 const event = response.data.event;
                 const format = (event.allDay) ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:mm'
+                const color = (event.color) ? event.color : "#0C4C91"
 
-                tooltip = '<div class="tooltiptopicevent btn-primary">' + 'Evento: ' + ': ' + event.title 
+                tooltip = '<div class="tooltiptopicevent" style="background:'+color+';">' + 'Evento: ' + ': ' + event.title 
                 + '</br>' + 'Inicia: ' + ': ' + moment(event.start).format(format)
                 + '</br>' + 'Finaliza: ' + ': ' + moment(event.end).format(format)
                 + '</br>' + 'Centros: ' + ': ' + event.centers
                 + '</div>';
-    
-    
+                
                 $("#calendar").append(tooltip);
                 $(this).mouseover(function (e) {
                     $(this).css('z-index', 10000);

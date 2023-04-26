@@ -57,9 +57,18 @@
                         <input type="text" minlength="3" name="title" id="title" class="form-control" ng-model="createForm.title" required autofocus>
                     </div>
                     <div class="form-group">
-                        <label for="title">Título</label>
+                        <label for="title">Centros</label>
                         <select ng-model="createForm.centers" required id="selectId" class="form-control show-tick selectpicker" data-style="'btn-outline-success'" title="Selecciona..." multiple data-actions-box="true" data-live-search="true" data-size="6">
                             <option value="@{{centro.idcentro}}" data-subtext="@{{ centro.cebe }}" ng-repeat="centro in centros">@{{ centro.idcentro }} - @{{centro.nombre}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="color">Color</label>
+                        <select ng-model="createForm.color" required class="form-control show-tick selectpicker" data-style="'btn-outline-success'" title="Color..." data-actions-box="true" data-live-search="true" data-size="6">
+                            <option value="blue">Azul</option>
+                            <option value="red">Rojo</option>
+                            <option value="purple">Morado</option>
+                            <option value="green">Verde</option>
                         </select>
                     </div>
             </div>

@@ -35,7 +35,7 @@ class HomeController extends Controller
 
         $start = ($request->start) ? $request->start : ('');
         $end = ($request->end) ? $request->end : ('');
-        $events = Event::whereDate("start", ">=", $start)->whereDate("end", "<=", $end)->select("id", "title", "start", "end", "allDay")->get();
+        $events = Event::whereDate("start", ">=", $start)->whereDate("end", "<=", $end)->select("id", "title", "start", "end", "allDay", "color")->get();
         return response()->json($events);
     }
 
@@ -48,38 +48,56 @@ class HomeController extends Controller
 
     public function show($id)
     {
-        // return $request;
-        $event = Event::findOrFail($id);
-        
-        $data = [
-            "code" => 200,
-            "status" => "success",
-            "event" => $event,
-        ];
+        try {
+            // return $request;
+            $event = Event::findOrFail($id);
 
-        return response()->json($data, $data["code"]);
+            $data = [
+                "code" => 200,
+                "status" => "success",
+                "event" => $event,
+            ];
+
+            return response()->json($data, $data["code"]);
+
+            // throw new \ErrorException("Error al obtener los catálogos.", 404);
+        } catch (\Exception $e) {
+            if (str_contains($e->getMessage(), "Failed to connect")) throw new \ErrorException("Tiempo de espera agotado.", 500);
+            throw new HttpException(($e->getCode() > 500 || $e->getCode() < 100) ? 500 : $e->getCode(), $e->getMessage());
+        }
     }
 
     public function updateEvent(Request $request)
     {
-        // return $request;
-        $data = $request->all();
-        Event::where("id", $data["id"])->update(["title" => $data["title"], "start" => $data["start"], "end" => $data["end"],]);
+        try {
+            // return $request;
+            $data = $request->all();
+            Event::where("id", $data["id"])->update(["title" => $data["title"], "start" => $data["start"], "end" => $data["end"],]);
 
-        $data = [
-            "code" => 200,
-            "status" => "success",
-            "message" => "Registro Actualizado.",
-        ];
+            $data = [
+                "code" => 200,
+                "status" => "success",
+                "message" => "Registro Actualizado.",
+            ];
 
-        return response()->json($data, $data["code"]);
+            return response()->json($data, $data["code"]);
+        } catch (\Exception $e) {
+            if (str_contains($e->getMessage(), "Failed to connect")) throw new \ErrorException("Tiempo de espera agotado.", 500);
+            throw new HttpException(($e->getCode() > 500 || $e->getCode() < 100) ? 500 : $e->getCode(), $e->getMessage());
+        }
     }
 
     public function deleteEvent(Request $request)
     {
-        $event = Event::findOrFail($request->get('id'));
-        $event->delete();
-        return response()->json($event);
+        try {
+            $event = Event::findOrFail($request->get('id'));
+            $event->delete();
+            return response()->json($event);                
+            // throw new \ErrorException("Error al obtener los catálogos.", 404);
+        } catch (\Exception $e) {
+            if (str_contains($e->getMessage(), "Failed to connect")) throw new \ErrorException("Tiempo de espera agotado.", 500);
+            throw new HttpException(($e->getCode() > 500 || $e->getCode() < 100) ? 500 : $e->getCode(), $e->getMessage());
+        }
     }
 
     public function getAllCentros()

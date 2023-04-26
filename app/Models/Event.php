@@ -9,7 +9,7 @@ class Event extends Model
 {
     use HasFactory;
 
-    protected $fillable = ["title", "start", "end", "allDay", "centers"];
+    protected $fillable = ["title", "start", "end", "allDay", "centers", "color"];
 
     protected $casts = ["centers" => "array"];
 }
