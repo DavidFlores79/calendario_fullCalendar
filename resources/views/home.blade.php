@@ -5,7 +5,7 @@
 @section('ngController', 'home')
 
 @section('content')
-<div class="">
+<div id="myapp" class="">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
@@ -29,9 +29,11 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body text-center">
-                ¿Realmente desea cambiar en evento <span id="event-title" class="font-weight-bold"></span>
-                al <span id="event-start" class="font-weight-bold"></span> ?
+            <div class="modal-body">
+                <div class="text-center mb-3">¿Realmente desea cambiar este evento?</div>
+                <div class="">Evento: <span class="font-weight-bold" id="event-title"></span></div>
+                <div class="">Inicio: <span class="font-weight-bold" id="event-start"></span></div>
+                <div class="">Fin: <span class="font-weight-bold" id="event-end"></span></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" ng-click="update()">Confirmar</button>
@@ -85,7 +87,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="confirmDeleteModalLabel">Drag & Drop</h5>
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Eliminar Evento</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

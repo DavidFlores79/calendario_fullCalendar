@@ -24,6 +24,10 @@
     <!-- Full Calendar  -->
     <script src="{{ asset('js/fullcalendar/index.global.min.js') }}"></script>
     <script src="{{ asset('js/fullcalendar/core/locales/es.global.js') }}"></script>
+    <!-- Constants JS -->
+    <script src="{{ asset('js/constantes.js') }}"></script>
+    <!-- Loading  -->
+    <link href="{{ asset('css/loading.css') }}" rel="stylesheet">
     @yield('styles')
 
 </head>

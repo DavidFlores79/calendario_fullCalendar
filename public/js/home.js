@@ -24,8 +24,31 @@ app.controller('home', function ($scope, $http) {
                 $('.selectpicker').selectpicker('refresh');
             }, 500);
         },
-        function errorCallback(error) {
-            console.log('error', error);
+        function errorCallback(response) {
+            console.log('error', response);
+            if (response.status === 422) {
+                let mensaje = "";
+                for (let i in response.data.errors) {
+                    mensaje += response.data.errors[i] + "\n";
+                }
+                swal(mensaje, {
+                    title: titulos.mensaje_sistema,
+                    icon: tiposDeMensaje.advertencia,
+                });
+            } else if (response.status === 419) {
+                swal({
+                    title: comprobaciongastos.titulo,
+                    text: "Serás redirigido a Home.",
+                    icon: tiposDeMensaje.advertencia,
+                    confirmButtonText: 'Ir a Home!',
+                  }).then(() => $window.location.href = "home");
+            } else {
+                swal(
+                    titulos.mensaje_sistema,
+                    response.data.message,
+                    tiposDeMensaje.error
+                );
+            }
         }
     );
 
@@ -67,24 +90,23 @@ app.controller('home', function ($scope, $http) {
         },
         eventClick: (info) => {
             $('.tooltiptopicevent').remove();
-            $scope.confirmDelete( info.event );
+            $scope.confirmDelete(info.event);
         },
         eventDrop: (info) => {
             $('.tooltiptopicevent').remove();
             $scope.edit(info);
         },
+        eventResize: function(info) {
+            $('.tooltiptopicevent').remove();
+            $scope.edit(info);
+        },
         eventMouseEnter: function (info) {
-            const {el, event} = info;
-            console.log('info', info);
-            console.log('el', el);
-            console.log('event', event);
-            console.log('event id', event.id);
-
+            const { el, event } = info;
             $scope.show(event.id);
         },
         eventMouseLeave: function (info) {
-            // $(this).css('z-index', 8);
-            $('.tooltiptopicevent').remove();
+            $(this).css('z-index', 8);
+            $('.tooltiptopicevent').fadeOut('slow').remove();
         },
         locale: 'es',
         eventTimeFormat: { // like '14:30:00'
@@ -95,7 +117,7 @@ app.controller('home', function ($scope, $http) {
     });
     $scope.calendar.render();
 
-    $scope.show = ( id ) => {
+    $scope.show = (id) => {
         $http({
             url: `events/${id}`,
             method: 'GET',
@@ -110,22 +132,31 @@ app.controller('home', function ($scope, $http) {
                 const event = response.data.event;
                 const format = (event.allDay) ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:mm'
                 const color = (event.color) ? event.color : "#0C4C91"
+                const centers = event.centers.join(' ');
 
-                tooltip = '<div class="tooltiptopicevent" style="background:'+color+';">' + 'Evento: ' + ': ' + event.title 
-                + '</br>' + 'Inicia: ' + ': ' + moment(event.start).format(format)
-                + '</br>' + 'Finaliza: ' + ': ' + moment(event.end).format(format)
-                + '</br>' + 'Centros: ' + ': ' + event.centers
-                + '</div>';
-                
+                tooltip = '<div class="tooltiptopicevent" style="background:' + color + ';">'
+                    + '<div>Evento: ' + ': ' + event.title + '</div>'
+                    + '<div>Inicia: ' + ': ' + moment(event.start).format(format) + '</div>'
+                    + '<div>Finaliza: ' + ': ' + moment(event.end).format(format) + '</div>'
+                    + '<div>Centros: ' + ': ' + centers + '</div>'
+                    + '</div>';
+
                 $("#calendar").append(tooltip);
                 $(this).mouseover(function (e) {
                     $(this).css('z-index', 10000);
                     $('.tooltiptopicevent').fadeIn('1000');
-                    $('.tooltiptopicevent').fadeTo('10', 1.9);
-                })    
+                })
+                    .mouseleave(() => {
+                        $(this).css('z-index', 8);
+                        $('.tooltiptopicevent').fadeOut('slow').remove();
+                    })
+                // .mousemove(function (e) {
+                //     $('.tooltiptopicevent').css('top', e.pageY + 10);
+                //     $('.tooltiptopicevent').css('left', e.pageX + 20);
+                // });
             },
-            function errorCallback(error) {
-                console.log('error', error);
+            function errorCallback(response) {
+                console.log('error', response);
             }
         );
     }
@@ -147,8 +178,32 @@ app.controller('home', function ($scope, $http) {
                 $('#createModal').modal('hide');
                 $scope.calendar.refetchEvents();
             },
-            function errorCallback(error) {
-                console.log('error', error);
+            function errorCallback(response) {
+                console.log('error', response);
+                $('#createModal').modal('hide');
+                if (response.status === 422) {
+                    let mensaje = "";
+                    for (let i in response.data.errors) {
+                        mensaje += response.data.errors[i] + "\n";
+                    }
+                    swal(mensaje, {
+                        title: titulos.mensaje_sistema,
+                        icon: tiposDeMensaje.advertencia,
+                    });
+                } else if (response.status === 419) {
+                    swal({
+                        title: comprobaciongastos.titulo,
+                        text: "Serás redirigido a Home.",
+                        icon: tiposDeMensaje.advertencia,
+                        confirmButtonText: 'Ir a Home!',
+                      }).then(() => $window.location.href = "home");
+                } else {
+                    swal(
+                        titulos.mensaje_sistema,
+                        response.data.message,
+                        tiposDeMensaje.error
+                    );
+                }
             }
         );
 
@@ -170,21 +225,25 @@ app.controller('home', function ($scope, $http) {
             allDay: info.event.allDay
         };
 
-        const date = new Date($scope.evento.start);
+        const start = new Date($scope.evento.start);
+        const end = getEndDate(info.event.allDay);
+        
         let options = {
             weekday: "long",
             year: "numeric",
             month: "long",
             day: "numeric",
         };
+
         if (!info.event.allDay) {
             options.hour = "2-digit";
             options.minute = "2-digit";
         }
-        console.log(date.toLocaleDateString("es-MX", options));
+        console.log(start.toLocaleDateString("es-MX", options));
 
         $('#event-title').html($scope.evento.title);
-        $('#event-start').html(date.toLocaleDateString("es-MX", options));
+        $('#event-start').html(start.toLocaleDateString("es-MX", options));
+        $('#event-end').html(end.toLocaleDateString("es-MX", options));
         $('#confirmUpdateModal').modal('show');
     }
 
@@ -209,8 +268,32 @@ app.controller('home', function ($scope, $http) {
                 $('#confirmUpdateModal').modal('hide');
                 // $scope.calendar.refetchEvents();
             },
-            function errorCallback(error) {
-                console.log('error', error);
+            function errorCallback(response) {
+                console.log('error', response);
+                $('#confirmUpdateModal').modal('hide');
+                if (response.status === 422) {
+                    let mensaje = "";
+                    for (let i in response.data.errors) {
+                        mensaje += response.data.errors[i] + "\n";
+                    }
+                    swal(mensaje, {
+                        title: titulos.mensaje_sistema,
+                        icon: tiposDeMensaje.advertencia,
+                    });
+                } else if (response.status === 419) {
+                    swal({
+                        title: comprobaciongastos.titulo,
+                        text: "Serás redirigido a Home.",
+                        icon: tiposDeMensaje.advertencia,
+                        confirmButtonText: 'Ir a Home!',
+                      }).then(() => $window.location.href = "home");
+                } else {
+                    swal(
+                        titulos.mensaje_sistema,
+                        response.data.message,
+                        tiposDeMensaje.error
+                    );
+                }
             }
         );
 
@@ -241,16 +324,51 @@ app.controller('home', function ($scope, $http) {
                 $('#confirmDeleteModal').modal('hide');
                 $scope.calendar.refetchEvents();
             },
-            function errorCallback(error) {
-                console.log('error', error);
+            function errorCallback(response) {
+                console.log('error', response);
+                $('#confirmDeleteModal').modal('hide');
+                if (response.status === 422) {
+                    let mensaje = "";
+                    for (let i in response.data.errors) {
+                        mensaje += response.data.errors[i] + "\n";
+                    }
+                    swal(mensaje, {
+                        title: titulos.mensaje_sistema,
+                        icon: tiposDeMensaje.advertencia,
+                    });
+                } else if (response.status === 419) {
+                    swal({
+                        title: comprobaciongastos.titulo,
+                        text: "Serás redirigido a Home.",
+                        icon: tiposDeMensaje.advertencia,
+                        confirmButtonText: 'Ir a Home!',
+                      }).then(() => $window.location.href = "home");
+                } else {
+                    swal(
+                        titulos.mensaje_sistema,
+                        response.data.message,
+                        tiposDeMensaje.error
+                    );
+                }
             }
         );
 
     }
 
-    $('#editModal').on('hidden.bs.modal', function () {
+    $('#createModal').on('hidden.bs.modal', function () {
         console.log('haz algo');
+        $scope.createForm = {};
     });
+
+    function getEndDate( allDay ) {
+        if (allDay) {
+            let tempDate = new Date($scope.evento.end);
+            tempDate.setDate(tempDate.getDate() - 1);
+            return tempDate;
+        } else {
+            return new Date($scope.evento.end);
+        }
+    }
 });
 
 app.filter('activoInactivo', function () {

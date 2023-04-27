@@ -41,9 +41,24 @@ class HomeController extends Controller
 
     public function createEvent(Request $request)
     {
-        $data = $request->all();
-        $events = Event::create($data);
-        return response()->json($events);
+        /** validamos el request */
+        $rules = [
+            'start' => 'required|after_or_equal:today',
+        ];
+        $messages = [
+            'start.after_or_equal' => 'No es posible crear un evento anterior a la fecha de hoy.',
+        ];
+        $this->validate($request, $rules, $messages);
+
+        try {
+            $data = $request->all();
+            $events = Event::create($data);
+            return response()->json($events);                
+        // throw new \ErrorException("Error al obtener los catálogos.", 404);
+        } catch (\Exception $e) {
+            if (str_contains($e->getMessage(), "Failed to connect")) throw new \ErrorException("Tiempo de espera agotado.", 500);
+            throw new HttpException(($e->getCode() > 500 || $e->getCode() < 100) ? 500 : $e->getCode(), $e->getMessage());
+        }
     }
 
     public function show($id)
@@ -69,15 +84,27 @@ class HomeController extends Controller
 
     public function updateEvent(Request $request)
     {
+        /** validamos el request */
+        $rules = [
+            'id' => 'required|exists:events,id',
+            'start' => 'required|after_or_equal:today',
+        ];
+        $messages = [
+            'start.after_or_equal' => 'No es posible modificar un evento anterior a la fecha de hoy.',
+        ];
+        $this->validate($request, $rules, $messages);
+
         try {
             // return $request;
             $data = $request->all();
-            Event::where("id", $data["id"])->update(["title" => $data["title"], "start" => $data["start"], "end" => $data["end"],]);
+            $event = Event::where("id", $data["id"])->first();
+            $event->update(["title" => $data["title"], "start" => $data["start"], "end" => $data["end"],]);
 
             $data = [
                 "code" => 200,
                 "status" => "success",
                 "message" => "Registro Actualizado.",
+                "event" => $event
             ];
 
             return response()->json($data, $data["code"]);
