@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -116,10 +117,22 @@ class HomeController extends Controller
 
     public function deleteEvent(Request $request)
     {
+        /** validamos el request */
+        $rules = [
+            'id' => 'required|exists:events,id',
+        ];
+        $this->validate($request, $rules);
+        
         try {
             $event = Event::findOrFail($request->get('id'));
+            $now = Carbon::now();
+            $event_start = Carbon::parse($event->start);
+            
+            if (!$event_start->gte($now)) throw new \ErrorException("No es posible eliminar un evento que ya pasó.", 403);
+
             $event->delete();
             return response()->json($event);                
+
             // throw new \ErrorException("Error al obtener los catálogos.", 404);
         } catch (\Exception $e) {
             if (str_contains($e->getMessage(), "Failed to connect")) throw new \ErrorException("Tiempo de espera agotado.", 500);
