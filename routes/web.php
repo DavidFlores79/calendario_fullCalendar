@@ -19,11 +19,17 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('get-all-centros', [App\Http\Controllers\HomeController::class, 'getAllCentros']);
+Route::get('get-catalogos', [App\Http\Controllers\HomeController::class, 'getCatalogos']);
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::get('events', [App\Http\Controllers\HomeController::class, 'getEvents']);
-Route::get('events/{id}', [App\Http\Controllers\HomeController::class, 'show']);
-Route::post('events', [App\Http\Controllers\HomeController::class, 'createEvent']);
-Route::put('events', [App\Http\Controllers\HomeController::class, 'updateEvent']);
-Route::delete('events', [App\Http\Controllers\HomeController::class, 'deleteEvent']);
+
+Route::middleware(["auth"])->group(function () {
+    
+    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+    Route::get('events', [App\Http\Controllers\HomeController::class, 'getEvents']);
+    Route::get('events/{id}', [App\Http\Controllers\HomeController::class, 'show']);
+    Route::post('events', [App\Http\Controllers\HomeController::class, 'createEvent']);
+    Route::put('events', [App\Http\Controllers\HomeController::class, 'updateEvent']);
+    Route::delete('events', [App\Http\Controllers\HomeController::class, 'deleteEvent']);
+});
+

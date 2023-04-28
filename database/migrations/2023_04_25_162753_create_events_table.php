@@ -17,7 +17,6 @@ class CreateEventsTable extends Migration
             $table->id();
             $table->string('title');
             $table->string('description')->nullable();
-            $table->json('centers');
             $table->dateTime('start');
             $table->dateTime('end');
             $table->string('color')->nullable();

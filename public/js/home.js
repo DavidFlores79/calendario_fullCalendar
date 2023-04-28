@@ -1,57 +1,11 @@
 var app = angular.module('home', []);
 
 
-app.controller('home', function ($scope, $http) {
+app.controller('home', function ($scope, $http, $window) {
     $scope.createForm = {};
     $scope.editForm = {};
     $scope.dato = {};
     $scope.datos = [];
-    $scope.centros = [];
-
-    $http({
-        url: 'get-all-centros',
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-    }).then(
-        function successCallback(response) {
-            console.log('ok', response);
-            $scope.centros = response.data.centros;
-            setTimeout(() => {
-                $('.selectpicker').selectpicker('deselectAll');
-                $('.selectpicker').selectpicker('refresh');
-            }, 500);
-        },
-        function errorCallback(response) {
-            console.log('error', response);
-            if (response.status === 422) {
-                let mensaje = "";
-                for (let i in response.data.errors) {
-                    mensaje += response.data.errors[i] + "\n";
-                }
-                swal(mensaje, {
-                    title: titulos.mensaje_sistema,
-                    icon: tiposDeMensaje.advertencia,
-                });
-            } else if (response.status === 419) {
-                swal({
-                    title: comprobaciongastos.titulo,
-                    text: "Serás redirigido a Home.",
-                    icon: tiposDeMensaje.advertencia,
-                    confirmButtonText: 'Ir a Home!',
-                  }).then(() => $window.location.href = "home");
-            } else {
-                swal(
-                    titulos.mensaje_sistema,
-                    response.data.message,
-                    tiposDeMensaje.error
-                );
-            }
-        }
-    );
-
 
     var calendarEl = document.getElementById('calendar');
 
@@ -132,13 +86,11 @@ app.controller('home', function ($scope, $http) {
                 const event = response.data.event;
                 const format = (event.allDay) ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:mm'
                 const color = (event.color) ? event.color : "#0C4C91"
-                const centers = event.centers.join(' ');
 
                 tooltip = '<div class="tooltiptopicevent" style="background:' + color + ';">'
                     + '<div>Evento: ' + ': ' + event.title + '</div>'
                     + '<div>Inicia: ' + ': ' + moment(event.start).format(format) + '</div>'
                     + '<div>Finaliza: ' + ': ' + moment(event.end).format(format) + '</div>'
-                    + '<div>Centros: ' + ': ' + centers + '</div>'
                     + '</div>';
 
                 $("#calendar").append(tooltip);
@@ -192,7 +144,7 @@ app.controller('home', function ($scope, $http) {
                     });
                 } else if (response.status === 419) {
                     swal({
-                        title: comprobaciongastos.titulo,
+                        title: titulos.mensaje_sistema,
                         text: "Serás redirigido a Home.",
                         icon: tiposDeMensaje.advertencia,
                         confirmButtonText: 'Ir a Home!',
@@ -282,7 +234,7 @@ app.controller('home', function ($scope, $http) {
                     });
                 } else if (response.status === 419) {
                     swal({
-                        title: comprobaciongastos.titulo,
+                        title: titulos.mensaje_sistema,
                         text: "Serás redirigido a Home.",
                         icon: tiposDeMensaje.advertencia,
                         confirmButtonText: 'Ir a Home!',
@@ -338,7 +290,7 @@ app.controller('home', function ($scope, $http) {
                     });
                 } else if (response.status === 419) {
                     swal({
-                        title: comprobaciongastos.titulo,
+                        title: titulos.mensaje_sistema,
                         text: "Serás redirigido a Home.",
                         icon: tiposDeMensaje.advertencia,
                         confirmButtonText: 'Ir a Home!',

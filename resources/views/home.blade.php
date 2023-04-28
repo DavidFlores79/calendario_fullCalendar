@@ -5,18 +5,17 @@
 @section('ngController', 'home')
 
 @section('content')
-<div id="myapp" class="">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Dashboard') }}</div>
-
-                <div class="card-body">
-                    <div class="" id="calendar"></div>
-                </div>
-            </div>
+<div ng-cloak class="main mx-auto col-xl-7 col-lg-7 col-sm-12 mb-4">
+    <div class="card contenedor">
+        <div class="card-header bg-default d-md-flex justify-content-between ">
+            <h5 class="font-weight-bold centers-title">@yield('page-title')</h5>
+            <input type="text" name="buscar" class="search-query form-control col-lg-3 col-md-4 col-sm-12" placeholder="Buscar..." ng-model="searchQuery">
+        </div>
+        <div class="card-body">
+            <div class="" id="calendar"></div>
         </div>
     </div>
+
 </div>
 
 <!-- Modal Actualizar -->
@@ -57,12 +56,6 @@
                     <div class="form-group">
                         <label for="title">Título</label>
                         <input type="text" minlength="3" name="title" id="title" class="form-control" ng-model="createForm.title" required autofocus>
-                    </div>
-                    <div class="form-group">
-                        <label for="title">Centros</label>
-                        <select ng-model="createForm.centers" required id="selectId" class="form-control show-tick selectpicker" data-style="'btn-outline-success'" title="Selecciona..." multiple data-actions-box="true" data-live-search="true" data-size="6">
-                            <option value="@{{centro.idcentro}}" data-subtext="@{{ centro.cebe }}" ng-repeat="centro in centros">@{{ centro.idcentro }} - @{{centro.nombre}}</option>
-                        </select>
                     </div>
                     <div class="form-group">
                         <label for="color">Color</label>
