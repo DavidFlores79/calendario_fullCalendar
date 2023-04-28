@@ -28,7 +28,7 @@ Route::middleware(["auth"])->group(function () {
 
     Route::get('events', [App\Http\Controllers\HomeController::class, 'getEvents']);
     Route::get('events/{id}', [App\Http\Controllers\HomeController::class, 'show']);
-    Route::post('events', [App\Http\Controllers\HomeController::class, 'createEvent']);
+    Route::post('events', [App\Http\Controllers\HomeController::class, 'storeEvent']);
     Route::put('events', [App\Http\Controllers\HomeController::class, 'updateEvent']);
     Route::delete('events', [App\Http\Controllers\HomeController::class, 'deleteEvent']);
 });

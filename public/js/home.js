@@ -142,7 +142,7 @@ app.controller('home', function ($scope, $http, $window) {
                         title: titulos.mensaje_sistema,
                         icon: tiposDeMensaje.advertencia,
                     });
-                } else if (response.status === 419) {
+                } else if (response.status === 419 || response.status === 401) {
                     swal({
                         title: titulos.mensaje_sistema,
                         text: "Serás redirigido a Home.",
@@ -232,7 +232,7 @@ app.controller('home', function ($scope, $http, $window) {
                         title: titulos.mensaje_sistema,
                         icon: tiposDeMensaje.advertencia,
                     });
-                } else if (response.status === 419) {
+                } else if (response.status === 419 || response.status === 401) {
                     swal({
                         title: titulos.mensaje_sistema,
                         text: "Serás redirigido a Home.",
@@ -288,7 +288,7 @@ app.controller('home', function ($scope, $http, $window) {
                         title: titulos.mensaje_sistema,
                         icon: tiposDeMensaje.advertencia,
                     });
-                } else if (response.status === 419) {
+                } else if (response.status === 419 || response.status === 401) {
                     swal({
                         title: titulos.mensaje_sistema,
                         text: "Serás redirigido a Home.",

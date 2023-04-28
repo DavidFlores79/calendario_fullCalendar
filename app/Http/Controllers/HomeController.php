@@ -36,7 +36,7 @@ class HomeController extends Controller
      * uno o mas centros, y para uno o mas distritos, recibe y guarda
      * de igual forma grupos de articulos y articulos individuales
      */
-    public function createEvent(Request $request)
+    public function storeEvent(Request $request)
     {
         /** validamos el request */
         $rules = [
